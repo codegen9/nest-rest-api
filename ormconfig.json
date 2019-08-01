@@ -1,0 +1,10 @@
+{
+	"type": "postgres",
+	"host": "localhost",
+	"port": 5432,
+	"username": "admin",
+	"password": "admin",
+	"database": "todo_app",
+	"entities": ["src/**/*.entity.ts"],
+	"synchronize": true
+}
