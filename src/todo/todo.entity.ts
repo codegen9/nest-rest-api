@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
-// import { User } from '../user/user.entity';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class Todo {
@@ -16,6 +16,6 @@ export class Todo {
 	@Column()
 	priority: number
 
-	// @ManyToOne(type => User, user => user)
-	// user: User
+	@ManyToOne(type => User, user => user.todos)
+	user: User
 }

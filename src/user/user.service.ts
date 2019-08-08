@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult, DeleteResult } from 'typeorm';
 
-import { UserInterface } from './interfaces/user.interface';
+import { IUser } from './interfaces/user.interface';
 import { User } from './user.entity';
 
 @Injectable()
@@ -12,23 +12,39 @@ export class UserService {
 		private readonly userRepository: Repository<User>
 	) {}
 
-	async findOne(id: string): Promise<UserInterface> {
-		return await this.userRepository.findOne(id);
+	async findByUsername(username: string): Promise<IUser | undefined> {
+		return await this.userRepository.findOne({ where: { username: username } });
 	}
 
-	async findAll(): Promise<UserInterface[]> {
+	async findOne(id: string): Promise<IUser> {
+		const user = await this.userRepository.findOne(id);
+		if(!user) {
+			throw new HttpException("User not found", HttpStatus.NOT_FOUND);
+		}
+		return user;
+	}
+
+	async findAll(): Promise<IUser[]> {
 		return await this.userRepository.find();
 	}
 
-	async create(user: UserInterface): Promise<UserInterface> {
+	async create(user: IUser): Promise<IUser> {
 		return await this.userRepository.save(user);
 	}
 
-	async update(id: string, user: UserInterface): Promise<UpdateResult> {
-		return await this.userRepository.update(id, user);
+	async update(id: string, data: IUser): Promise<UpdateResult> {
+		const user = await this.userRepository.findOne(id);
+		if(!user) {
+			throw new HttpException("User not found", HttpStatus.NOT_FOUND);
+		}
+		return await this.userRepository.update(id, data);
 	}
 
 	async delete(id: string): Promise<DeleteResult> {
+		const user = await this.userRepository.findOne(id);
+		if(!user) {
+			throw new HttpException("User not found", HttpStatus.NOT_FOUND);
+		}
 		return await this.userRepository.delete(id);
 	}
 }

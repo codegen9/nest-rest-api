@@ -9,7 +9,4 @@ export class CreateTodoDto {
 
 	@ApiModelProperty()
 	readonly priority?: number;
-
-	@ApiModelProperty()
-	readonly userId: string;
 }

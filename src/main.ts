@@ -1,10 +1,20 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { getConnection } from 'typeorm';
 
 import { AppModule } from './app.module';
+import * as ormConfig from '../ormconfig.json';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: console,
+  });
+
+  app.useGlobalPipes(new ValidationPipe());
+
+  // run migrations
+  await getConnection().runMigrations();
 
   // swagger setup
   const options = new DocumentBuilder()
